@@ -256,7 +256,12 @@ function loadNextLevel () {
         value.destroy()
         effects.clearParticles(value)
     }
+    for (let value of sprites.allOfKind(SpriteKind.Enemy)) {
+        value.destroy()
+        effects.clearParticles(value)
+    }
     buildCity()
+    spawnEnemies()
 }
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     animation.runImageAnimation(
@@ -333,6 +338,29 @@ controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     )
     directionFacing = 1
 })
+function spawnEnemies () {
+    for (let index = 0; index < Math.trunc(stageNumber / 3) + 1; index++) {
+        Tank = sprites.create(img`
+            f f f f . . f f f f . . f f f f 
+            f 6 6 f . . f 6 6 f . . f 6 6 f 
+            f 6 6 f f f f f f f f f f 6 6 f 
+            f f f f 6 6 6 6 6 6 6 6 f f f f 
+            f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
+            f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
+            f f f f 6 6 6 6 6 6 6 6 f f f f 
+            f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
+            f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
+            f f f f 6 6 6 6 6 6 6 6 f f f f 
+            f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
+            f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
+            f f f f 6 6 6 6 6 6 6 6 f f f f 
+            f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
+            f 6 6 f f f f f f f f f f 6 6 f 
+            f f f f . . . . . . . . f f f f 
+            `, SpriteKind.Enemy)
+        tiles.placeOnRandomTile(Tank, assets.tile`myTile`)
+    }
+}
 function buildCity () {
     tiles.setTilemap(tilemap`level1`)
     for (let index = 0; index < randint(50, 65); index++) {
@@ -563,6 +591,7 @@ let buildingsLeft = 0
 let Building: Sprite = null
 let verRoadPicker = 0
 let horRoadPicker = 0
+let Tank: Sprite = null
 let directionFacing = 0
 let stageNumber = 0
 let playerSpeed = 0
