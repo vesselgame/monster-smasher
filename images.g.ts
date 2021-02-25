@@ -213,6 +213,78 @@ f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f
 f 6 6 f f f f f f f f f f 6 6 f 
 f f f f . . . . . . . . f f f f 
 `;
+            case "image4":return img`
+f f f f f f f f f f f f f f f f 
+f 6 6 f 6 6 f 6 6 f 6 6 f 6 6 f 
+f 6 6 f 6 6 f 6 6 f 6 6 f 6 6 f 
+f f f f f f f f f f f f f f f f 
+. f 6 6 6 6 6 6 6 6 6 6 6 f . . 
+. f 6 6 6 6 6 6 6 6 6 6 6 f . . 
+. f 6 6 6 6 6 6 6 6 6 6 6 f f f 
+. f 6 6 6 6 6 6 6 6 6 6 6 f 6 f 
+. f 6 6 6 6 6 6 6 6 6 6 6 f 6 f 
+. f 6 6 6 6 6 6 6 6 6 6 6 f f f 
+. f 6 6 6 6 6 6 6 6 6 6 6 f . . 
+. f 6 6 6 6 6 6 6 6 6 6 6 f . . 
+f f f f f f f f f f f f f f f f 
+f 6 6 f 6 6 f 6 6 f 6 6 f 6 6 f 
+f 6 6 f 6 6 f 6 6 f 6 6 f 6 6 f 
+f f f f f f f f f f f f f f f f 
+`;
+            case "image1":return img`
+f f f f f f f f f f f f f f f f 
+f 6 6 f 6 6 f 6 6 f 6 6 f 6 6 f 
+f 6 6 f 6 6 f 6 6 f 6 6 f 6 6 f 
+f f f f f f f f f f f f f f f f 
+. . f 6 6 6 6 6 6 6 6 6 6 6 f . 
+. . f 6 6 6 6 6 6 6 6 6 6 6 f . 
+f f f 6 6 6 6 6 6 6 6 6 6 6 f . 
+f 6 f 6 6 6 6 6 6 6 6 6 6 6 f . 
+f 6 f 6 6 6 6 6 6 6 6 6 6 6 f . 
+f f f 6 6 6 6 6 6 6 6 6 6 6 f . 
+. . f 6 6 6 6 6 6 6 6 6 6 6 f . 
+. . f 6 6 6 6 6 6 6 6 6 6 6 f . 
+f f f f f f f f f f f f f f f f 
+f 6 6 f 6 6 f 6 6 f 6 6 f 6 6 f 
+f 6 6 f 6 6 f 6 6 f 6 6 f 6 6 f 
+f f f f f f f f f f f f f f f f 
+`;
+            case "image3":return img`
+f f f f . . f f f f . . f f f f 
+f 6 6 f . . f 6 6 f . . f 6 6 f 
+f 6 6 f f f f f f f f f f 6 6 f 
+f f f f 6 6 6 6 6 6 6 6 f f f f 
+f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
+f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
+f f f f 6 6 6 6 6 6 6 6 f f f f 
+f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
+f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
+f f f f 6 6 6 6 6 6 6 6 f f f f 
+f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
+f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
+f f f f 6 6 6 6 6 6 6 6 f f f f 
+f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
+f 6 6 f f f f f f f f f f 6 6 f 
+f f f f . . . . . . . . f f f f 
+`;
+            case "image5":return img`
+f f f f . . . . . . . . f f f f 
+f 6 6 f f f f f f f f f f 6 6 f 
+f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
+f f f f 6 6 6 6 6 6 6 6 f f f f 
+f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
+f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
+f f f f 6 6 6 6 6 6 6 6 f f f f 
+f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
+f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
+f f f f 6 6 6 6 6 6 6 6 f f f f 
+f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
+f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
+f f f f 6 6 6 6 6 6 6 6 f f f f 
+f 6 6 f f f f f f f f f f 6 6 f 
+f 6 6 f . . f 6 6 f . . f 6 6 f 
+f f f f . . f f f f . . f f f f 
+`;
         }
         return null;
     })

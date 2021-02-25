@@ -2,6 +2,7 @@ namespace SpriteKind {
     export const Buildings = SpriteKind.create()
     export const floor = SpriteKind.create()
     export const splash = SpriteKind.create()
+    export const tanks = SpriteKind.create()
 }
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     if (directionFacing == 1) {
@@ -155,6 +156,16 @@ controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
 function updateMovement () {
     controller.moveSprite(playerMonster, playerSpeed, playerSpeed)
 }
+function stompySounds () {
+    if (!(playerMonster.vx == 0)) {
+        music.thump.play()
+        pause(500)
+    }
+    if (!(playerMonster.vy == 0)) {
+        music.thump.play()
+        pause(500)
+    }
+}
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
     music.spooky.play()
     playerSpeed = 0
@@ -256,7 +267,7 @@ function loadNextLevel () {
         value.destroy()
         effects.clearParticles(value)
     }
-    for (let value of sprites.allOfKind(SpriteKind.Enemy)) {
+    for (let value of sprites.allOfKind(SpriteKind.tanks)) {
         value.destroy()
         effects.clearParticles(value)
     }
@@ -357,7 +368,7 @@ function spawnEnemies () {
             f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
             f 6 6 f f f f f f f f f f 6 6 f 
             f f f f . . . . . . . . f f f f 
-            `, SpriteKind.Enemy)
+            `, SpriteKind.tanks)
         tiles.placeOnRandomTile(Tank, assets.tile`myTile`)
     }
 }
@@ -428,6 +439,11 @@ function buildCity () {
     }
     tiles.placeOnRandomTile(playerMonster, assets.tile`myTile2`)
 }
+sprites.onOverlap(SpriteKind.Player, SpriteKind.tanks, function (sprite, otherSprite) {
+    scene.cameraShake(4, 500)
+    otherSprite.destroy(effects.fire, 100)
+    music.smallCrash.play()
+})
 controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     if (directionFacing == 1) {
         animation.runImageAnimation(
@@ -764,17 +780,101 @@ game.onUpdate(function () {
         animation.stopAnimation(animation.AnimationTypes.All, playerMonster)
     }
 })
-// Stompy Sounds
-forever(function () {
-    if (!(playerMonster.vx == 0)) {
-        music.thump.play()
-        pause(500)
-    }
-    if (!(playerMonster.vy == 0)) {
-        music.thump.play()
-        pause(500)
+game.onUpdateInterval(1000, function () {
+    for (let value of sprites.allOfKind(SpriteKind.tanks)) {
+        if (randint(0, 1) == 0) {
+            if (randint(0, 1) == 0) {
+                value.setVelocity(0, 0)
+                value.setImage(img`
+                    f f f f f f f f f f f f f f f f 
+                    f 6 6 f 6 6 f 6 6 f 6 6 f 6 6 f 
+                    f 6 6 f 6 6 f 6 6 f 6 6 f 6 6 f 
+                    f f f f f f f f f f f f f f f f 
+                    . f 6 6 6 6 6 6 6 6 6 6 6 f . . 
+                    . f 6 6 6 6 6 6 6 6 6 6 6 f . . 
+                    . f 6 6 6 6 6 6 6 6 6 6 6 f f f 
+                    . f 6 6 6 6 6 6 6 6 6 6 6 f 6 f 
+                    . f 6 6 6 6 6 6 6 6 6 6 6 f 6 f 
+                    . f 6 6 6 6 6 6 6 6 6 6 6 f f f 
+                    . f 6 6 6 6 6 6 6 6 6 6 6 f . . 
+                    . f 6 6 6 6 6 6 6 6 6 6 6 f . . 
+                    f f f f f f f f f f f f f f f f 
+                    f 6 6 f 6 6 f 6 6 f 6 6 f 6 6 f 
+                    f 6 6 f 6 6 f 6 6 f 6 6 f 6 6 f 
+                    f f f f f f f f f f f f f f f f 
+                    `)
+                value.setVelocity(10, 0)
+            } else {
+                value.setVelocity(0, 0)
+                value.setImage(img`
+                    f f f f f f f f f f f f f f f f 
+                    f 6 6 f 6 6 f 6 6 f 6 6 f 6 6 f 
+                    f 6 6 f 6 6 f 6 6 f 6 6 f 6 6 f 
+                    f f f f f f f f f f f f f f f f 
+                    . . f 6 6 6 6 6 6 6 6 6 6 6 f . 
+                    . . f 6 6 6 6 6 6 6 6 6 6 6 f . 
+                    f f f 6 6 6 6 6 6 6 6 6 6 6 f . 
+                    f 6 f 6 6 6 6 6 6 6 6 6 6 6 f . 
+                    f 6 f 6 6 6 6 6 6 6 6 6 6 6 f . 
+                    f f f 6 6 6 6 6 6 6 6 6 6 6 f . 
+                    . . f 6 6 6 6 6 6 6 6 6 6 6 f . 
+                    . . f 6 6 6 6 6 6 6 6 6 6 6 f . 
+                    f f f f f f f f f f f f f f f f 
+                    f 6 6 f 6 6 f 6 6 f 6 6 f 6 6 f 
+                    f 6 6 f 6 6 f 6 6 f 6 6 f 6 6 f 
+                    f f f f f f f f f f f f f f f f 
+                    `)
+                value.setVelocity(-10, 0)
+            }
+        } else {
+            if (randint(0, 1) == 0) {
+                value.setVelocity(0, 0)
+                value.setImage(img`
+                    f f f f . . . . . . . . f f f f 
+                    f 6 6 f f f f f f f f f f 6 6 f 
+                    f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
+                    f f f f 6 6 6 6 6 6 6 6 f f f f 
+                    f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
+                    f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
+                    f f f f 6 6 6 6 6 6 6 6 f f f f 
+                    f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
+                    f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
+                    f f f f 6 6 6 6 6 6 6 6 f f f f 
+                    f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
+                    f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
+                    f f f f 6 6 6 6 6 6 6 6 f f f f 
+                    f 6 6 f f f f f f f f f f 6 6 f 
+                    f 6 6 f . . f 6 6 f . . f 6 6 f 
+                    f f f f . . f f f f . . f f f f 
+                    `)
+                value.setVelocity(0, 10)
+            } else {
+                value.setVelocity(0, 0)
+                value.setImage(img`
+                    f f f f . . f f f f . . f f f f 
+                    f 6 6 f . . f 6 6 f . . f 6 6 f 
+                    f 6 6 f f f f f f f f f f 6 6 f 
+                    f f f f 6 6 6 6 6 6 6 6 f f f f 
+                    f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
+                    f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
+                    f f f f 6 6 6 6 6 6 6 6 f f f f 
+                    f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
+                    f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
+                    f f f f 6 6 6 6 6 6 6 6 f f f f 
+                    f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
+                    f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
+                    f f f f 6 6 6 6 6 6 6 6 f f f f 
+                    f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
+                    f 6 6 f f f f f f f f f f 6 6 f 
+                    f f f f . . . . . . . . f f f f 
+                    `)
+                value.setVelocity(0, -10)
+            }
+        }
     }
 })
+// Stompy Sounds
 forever(function () {
     info.setScore(buildingsLeft)
+    stompySounds()
 })
