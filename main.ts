@@ -153,6 +153,50 @@ controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
         )
     }
 })
+function createDayCityLists () {
+    ready_text_list = [
+    "Destroy",
+    "Burn",
+    "Smash",
+    "Crush",
+    "Wipe out",
+    "Ruin",
+    "Demolish",
+    "Obliterate",
+    "Ravage",
+    "Wreck"
+    ]
+    CityPrefix = [
+    " Happy",
+    " Fair",
+    " Pleasant",
+    " New",
+    " San",
+    " Fort",
+    " Saint",
+    " Grand",
+    " Little",
+    " North",
+    " South",
+    " East",
+    " West"
+    ]
+    CitySuffix = [
+    "burgh",
+    "ville",
+    " Falls",
+    " Springs",
+    " Beach",
+    "land",
+    "field",
+    " City",
+    " York",
+    "view",
+    "hampton",
+    "center",
+    "town"
+    ]
+}
 function updateMovement () {
     controller.moveSprite(playerMonster, playerSpeed, playerSpeed)
 }
@@ -172,6 +216,9 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
     updateMovement()
     playerMonster.say("RAWR", 1250)
     pause(1250)
+    if (info.life() < 3) {
+        info.changeLifeBy(1)
+    }
     playerSpeed = 50
     updateMovement()
 })
@@ -181,6 +228,9 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     updateMovement()
     playerMonster.say("ROAR", 1250)
     pause(1250)
+    if (info.life() < 3) {
+        info.changeLifeBy(1)
+    }
     playerSpeed = 50
     updateMovement()
 })
@@ -261,15 +311,15 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
 })
 function loadNextLevel () {
     stageNumber += 1
-    game.splash("Get Ready!", "Day " + stageNumber)
+    game.splash("Day " + ("" + stageNumber + " "), "" + ready_text_list._pickRandom() + CityPrefix._pickRandom() + CitySuffix._pickRandom())
     scene.cameraFollowSprite(playerMonster)
     for (let value of sprites.allOfKind(SpriteKind.floor)) {
         value.destroy()
         effects.clearParticles(value)
     }
-    for (let value of sprites.allOfKind(SpriteKind.tanks)) {
-        value.destroy()
-        effects.clearParticles(value)
+    for (let value2 of sprites.allOfKind(SpriteKind.tanks)) {
+        value2.destroy()
+        effects.clearParticles(value2)
     }
     buildCity()
     spawnEnemies()
@@ -349,25 +399,30 @@ controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     )
     directionFacing = 1
 })
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Projectile, function (sprite, otherSprite) {
+    otherSprite.destroy()
+    info.changeLifeBy(-1)
+    music.knock.play()
+})
 function spawnEnemies () {
     for (let index = 0; index < Math.trunc(stageNumber / 3) + 1; index++) {
         Tank = sprites.create(img`
-            f f f f . . f f f f . . f f f f 
-            f 6 6 f . . f 6 6 f . . f 6 6 f 
-            f 6 6 f f f f f f f f f f 6 6 f 
-            f f f f 6 6 6 6 6 6 6 6 f f f f 
-            f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
-            f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
-            f f f f 6 6 6 6 6 6 6 6 f f f f 
-            f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
-            f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
-            f f f f 6 6 6 6 6 6 6 6 f f f f 
-            f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
-            f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
-            f f f f 6 6 6 6 6 6 6 6 f f f f 
-            f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
-            f 6 6 f f f f f f f f f f 6 6 f 
-            f f f f . . . . . . . . f f f f 
+            f f f f f f f f f f f f f f f f 
+            f 6 6 f 6 6 f 6 6 f 6 6 f 6 6 f 
+            f 6 6 f 6 6 f 6 6 f 6 6 f 6 6 f 
+            f f f f f f f f f f f f f f f f 
+            . f 6 6 6 6 6 6 6 6 6 6 6 f . . 
+            . f 6 6 6 6 6 6 6 6 6 6 6 f . . 
+            . f 6 6 6 6 6 6 6 6 6 6 6 f f f 
+            . f 6 6 6 6 6 6 6 6 6 6 6 f 6 f 
+            . f 6 6 6 6 6 6 6 6 6 6 6 f 6 f 
+            . f 6 6 6 6 6 6 6 6 6 6 6 f f f 
+            . f 6 6 6 6 6 6 6 6 6 6 6 f . . 
+            . f 6 6 6 6 6 6 6 6 6 6 6 f . . 
+            f f f f f f f f f f f f f f f f 
+            f 6 6 f 6 6 f 6 6 f 6 6 f 6 6 f 
+            f 6 6 f 6 6 f 6 6 f 6 6 f 6 6 f 
+            f f f f f f f f f f f f f f f f 
             `, SpriteKind.tanks)
         tiles.placeOnRandomTile(Tank, assets.tile`myTile`)
     }
@@ -383,17 +438,17 @@ function buildCity () {
     for (let index = 0; index < randint(5, 10); index++) {
         horRoadPicker = randint(0, 15)
         verRoadPicker = randint(0, 15)
-        for (let index = 0; index <= 15; index++) {
-            tiles.setTileAt(tiles.getTileLocation(index, horRoadPicker), assets.tile`myTile`)
+        for (let index5 = 0; index5 <= 15; index5++) {
+            tiles.setTileAt(tiles.getTileLocation(index5, horRoadPicker), assets.tile`myTile`)
         }
-        for (let index = 0; index <= 15; index++) {
-            tiles.setTileAt(tiles.getTileLocation(verRoadPicker, index), assets.tile`myTile1`)
+        for (let index6 = 0; index6 <= 15; index6++) {
+            tiles.setTileAt(tiles.getTileLocation(verRoadPicker, index6), assets.tile`myTile1`)
         }
     }
     for (let index = 0; index < 3 + stageNumber; index++) {
         tiles.setTileAt(tiles.getTileLocation(randint(0, 15), randint(0, 15)), assets.tile`tile`)
     }
-    for (let value of tiles.getTilesByType(assets.tile`tile`)) {
+    for (let value3 of tiles.getTilesByType(assets.tile`tile`)) {
         Building = sprites.create(img`
             . . . . . . c c c c . . . . . . 
             . . . . c c c c c c c c . . . . 
@@ -412,7 +467,7 @@ function buildCity () {
             . d d d d d d c d d c d d d d . 
             . d d d d d d c d d c d d d d . 
             `, SpriteKind.Buildings)
-        tiles.placeOnTile(Building, value)
+        tiles.placeOnTile(Building, value3)
         buildingsLeft += 1
     }
     for (let index = 0; index < 10; index++) {
@@ -602,12 +657,16 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Buildings, function (sprite, oth
         loadNextLevel()
     }
 })
+let projectile: Sprite = null
 let water: Sprite = null
 let buildingsLeft = 0
 let Building: Sprite = null
 let verRoadPicker = 0
 let horRoadPicker = 0
 let Tank: Sprite = null
+let CitySuffix: string[] = []
+let CityPrefix: string[] = []
+let ready_text_list: string[] = []
 let directionFacing = 0
 let stageNumber = 0
 let playerSpeed = 0
@@ -773,6 +832,7 @@ playerMonster = sprites.create(img`
     `, SpriteKind.Player)
 playerSpeed = 50
 stageNumber = 0
+createDayCityLists()
 updateMovement()
 loadNextLevel()
 game.onUpdate(function () {
@@ -780,12 +840,13 @@ game.onUpdate(function () {
         animation.stopAnimation(animation.AnimationTypes.All, playerMonster)
     }
 })
+// Move Enemy Tanks around
 game.onUpdateInterval(1000, function () {
-    for (let value of sprites.allOfKind(SpriteKind.tanks)) {
+    for (let value4 of sprites.allOfKind(SpriteKind.tanks)) {
         if (randint(0, 1) == 0) {
             if (randint(0, 1) == 0) {
-                value.setVelocity(0, 0)
-                value.setImage(img`
+                value4.setVelocity(0, 0)
+                value4.setImage(img`
                     f f f f f f f f f f f f f f f f 
                     f 6 6 f 6 6 f 6 6 f 6 6 f 6 6 f 
                     f 6 6 f 6 6 f 6 6 f 6 6 f 6 6 f 
@@ -803,10 +864,10 @@ game.onUpdateInterval(1000, function () {
                     f 6 6 f 6 6 f 6 6 f 6 6 f 6 6 f 
                     f f f f f f f f f f f f f f f f 
                     `)
-                value.setVelocity(10, 0)
+                value4.setVelocity(10, 0)
             } else {
-                value.setVelocity(0, 0)
-                value.setImage(img`
+                value4.setVelocity(0, 0)
+                value4.setImage(img`
                     f f f f f f f f f f f f f f f f 
                     f 6 6 f 6 6 f 6 6 f 6 6 f 6 6 f 
                     f 6 6 f 6 6 f 6 6 f 6 6 f 6 6 f 
@@ -824,12 +885,12 @@ game.onUpdateInterval(1000, function () {
                     f 6 6 f 6 6 f 6 6 f 6 6 f 6 6 f 
                     f f f f f f f f f f f f f f f f 
                     `)
-                value.setVelocity(-10, 0)
+                value4.setVelocity(-10, 0)
             }
         } else {
             if (randint(0, 1) == 0) {
-                value.setVelocity(0, 0)
-                value.setImage(img`
+                value4.setVelocity(0, 0)
+                value4.setImage(img`
                     f f f f . . . . . . . . f f f f 
                     f 6 6 f f f f f f f f f f 6 6 f 
                     f 6 6 f 6 6 6 6 6 6 6 6 f 6 6 f 
@@ -847,10 +908,10 @@ game.onUpdateInterval(1000, function () {
                     f 6 6 f . . f 6 6 f . . f 6 6 f 
                     f f f f . . f f f f . . f f f f 
                     `)
-                value.setVelocity(0, 10)
+                value4.setVelocity(0, 10)
             } else {
-                value.setVelocity(0, 0)
-                value.setImage(img`
+                value4.setVelocity(0, 0)
+                value4.setImage(img`
                     f f f f . . f f f f . . f f f f 
                     f 6 6 f . . f 6 6 f . . f 6 6 f 
                     f 6 6 f f f f f f f f f f 6 6 f 
@@ -868,7 +929,7 @@ game.onUpdateInterval(1000, function () {
                     f 6 6 f f f f f f f f f f 6 6 f 
                     f f f f . . . . . . . . f f f f 
                     `)
-                value.setVelocity(0, -10)
+                value4.setVelocity(0, -10)
             }
         }
     }
@@ -877,4 +938,100 @@ game.onUpdateInterval(1000, function () {
 forever(function () {
     info.setScore(buildingsLeft)
     stompySounds()
+})
+// Enemy Tanks shoot
+game.onUpdateInterval(500, function () {
+    for (let value4 of sprites.allOfKind(SpriteKind.tanks)) {
+        if (randint(0, 1) == 0) {
+            if (value4.vx == 10) {
+                if (value4.y >= playerMonster.y - 37 && value4.y <= playerMonster.y + 37 && value4.x < playerMonster.x) {
+                    projectile = sprites.createProjectileFromSprite(img`
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . f . . . . . . . . 
+                        . . . . . . f 4 f . . . . . . . 
+                        . . . . . . . f . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        `, value4, 50, 0)
+                    projectile.setFlag(SpriteFlag.AutoDestroy, true)
+                }
+            } else if (value4.vx == -10) {
+                if (value4.y >= playerMonster.y - 37 && value4.y <= playerMonster.y + 37 && value4.x > playerMonster.x) {
+                    projectile = sprites.createProjectileFromSprite(img`
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . f . . . . . . . . 
+                        . . . . . . f 4 f . . . . . . . 
+                        . . . . . . . f . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        `, value4, -50, 0)
+                    projectile.setFlag(SpriteFlag.AutoDestroy, true)
+                }
+            } else if (value4.vy == 10) {
+                if (value4.x >= playerMonster.x - 21 && value4.x <= playerMonster.x + 21 && value4.y < playerMonster.y) {
+                    projectile = sprites.createProjectileFromSprite(img`
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . f . . . . . . . . 
+                        . . . . . . f 4 f . . . . . . . 
+                        . . . . . . . f . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        `, value4, 0, 50)
+                    projectile.setFlag(SpriteFlag.AutoDestroy, true)
+                }
+            } else if (value4.vy == -10) {
+                if (value4.x >= playerMonster.x - 21 && value4.x <= playerMonster.x + 21 && value4.y > playerMonster.y) {
+                    projectile = sprites.createProjectileFromSprite(img`
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . f . . . . . . . . 
+                        . . . . . . f 4 f . . . . . . . 
+                        . . . . . . . f . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        . . . . . . . . . . . . . . . . 
+                        `, value4, 0, -50)
+                    projectile.setFlag(SpriteFlag.AutoDestroy, true)
+                }
+            }
+        }
+    }
 })
