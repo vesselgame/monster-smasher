@@ -180,7 +180,8 @@ function createDayCityLists () {
     "South",
     "East",
     "West",
-    "Rich"
+    "Rich",
+    "Sand"
     ]
     CitySuffix = [
     "burgh",
@@ -313,8 +314,8 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
 })
 function loadNextLevel () {
     stageNumber += 1
-    game.splash("Day " + stageNumber, "" + ready_text_list._pickRandom() + " " + CityPrefix._pickRandom() + CitySuffix._pickRandom())
     scene.cameraFollowSprite(playerMonster)
+    game.splash("Day " + stageNumber, "" + ready_text_list._pickRandom() + " " + CityPrefix._pickRandom() + CitySuffix._pickRandom())
     for (let value of sprites.allOfKind(SpriteKind.floor)) {
         value.destroy()
         effects.clearParticles(value)
@@ -667,7 +668,8 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Buildings, function (sprite, oth
     }
 })
 let projectile: Sprite = null
-let missileLeft: Sprite = null
+let missile: Sprite = null
+let missileDirection = 0
 let water: Sprite = null
 let buildingsLeft = 0
 let Building: Sprite = null
@@ -952,74 +954,259 @@ forever(function () {
 forever(function () {
     info.setScore(buildingsLeft)
     stompySounds()
-    for (let value of sprites.allOfKind(SpriteKind.Projectile)) {
-        if (value.x >= 240) {
-            value.destroy()
-        }
-    }
 })
 forever(function () {
-    pause(1000)
-    missileLeft = sprites.create(img`
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . f f . . . . . . . . . . 
-        . . . . f 4 f . . . . . . . . . 
-        . . . . f 4 4 f f f f f f f f . 
-        2 5 2 5 f 4 4 4 4 4 4 4 4 4 4 f 
-        . 2 5 2 f 4 4 4 4 4 4 4 4 4 4 f 
-        . . . . f 4 4 f f f f f f f f . 
-        . . . . f 4 f . . . . . . . . . 
-        . . . . f f . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Projectile)
-    animation.runImageAnimation(
-    missileLeft,
-    [img`
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . f f . . . . . . . . . . 
-        . . . . f 4 f . . . . . . . . . 
-        . . . . f 4 4 f f f f f f f f . 
-        2 5 2 5 f 4 4 4 4 4 4 4 4 4 4 f 
-        . 2 5 2 f 4 4 4 4 4 4 4 4 4 4 f 
-        . . . . f 4 4 f f f f f f f f . 
-        . . . . f 4 f . . . . . . . . . 
-        . . . . f f . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        `,img`
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . f f . . . . . . . . . . 
-        . . . . f 4 f . . . . . . . . . 
-        . . . . f 4 4 f f f f f f f f . 
-        . 2 5 2 f 4 4 4 4 4 4 4 4 4 4 f 
-        2 5 2 5 f 4 4 4 4 4 4 4 4 4 4 f 
-        . . . . f 4 4 f f f f f f f f . 
-        . . . . f 4 f . . . . . . . . . 
-        . . . . f f . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        `],
-    100,
-    true
-    )
-    missileLeft.setVelocity(50, 0)
-    missileLeft.setPosition(0, randint(0, 250))
+    pause(randint(2000, 5000))
+    missileDirection = randint(0, 3)
+    if (missileDirection == 0) {
+        missile = sprites.create(img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . f f . . . . . . . . . . 
+            . . . . f 4 f . . . . . . . . . 
+            . . . . f 4 4 f f f f f f f f . 
+            2 5 2 5 f 4 4 4 4 4 4 4 4 4 4 f 
+            . 2 5 2 f 4 4 4 4 4 4 4 4 4 4 f 
+            . . . . f 4 4 f f f f f f f f . 
+            . . . . f 4 f . . . . . . . . . 
+            . . . . f f . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            `, SpriteKind.Projectile)
+        animation.runImageAnimation(
+        missile,
+        [img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . f f . . . . . . . . . . 
+            . . . . f 4 f . . . . . . . . . 
+            . . . . f 4 4 f f f f f f f f . 
+            2 5 2 5 f 4 4 4 4 4 4 4 4 4 4 f 
+            . 2 5 2 f 4 4 4 4 4 4 4 4 4 4 f 
+            . . . . f 4 4 f f f f f f f f . 
+            . . . . f 4 f . . . . . . . . . 
+            . . . . f f . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            `,img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . f f . . . . . . . . . . 
+            . . . . f 4 f . . . . . . . . . 
+            . . . . f 4 4 f f f f f f f f . 
+            . 2 5 2 f 4 4 4 4 4 4 4 4 4 4 f 
+            2 5 2 5 f 4 4 4 4 4 4 4 4 4 4 f 
+            . . . . f 4 4 f f f f f f f f . 
+            . . . . f 4 f . . . . . . . . . 
+            . . . . f f . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            `],
+        100,
+        true
+        )
+        missile.setVelocity(50, 0)
+        missile.setPosition(0, randint(0, 250))
+        missile.setFlag(SpriteFlag.DestroyOnWall, true)
+    } else if (missileDirection == 1) {
+        missile = sprites.create(img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . f f . . . . 
+            . . . . . . . . . f 4 f . . . . 
+            . f f f f f f f f 4 4 f . . . . 
+            f 4 4 4 4 4 4 4 4 4 4 f 2 5 2 . 
+            f 4 4 4 4 4 4 4 4 4 4 f 5 2 5 2 
+            . f f f f f f f f 4 4 f . . . . 
+            . . . . . . . . . f 4 f . . . . 
+            . . . . . . . . . . f f . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            `, SpriteKind.Projectile)
+        animation.runImageAnimation(
+        missile,
+        [img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . f f . . . . 
+            . . . . . . . . . f 4 f . . . . 
+            . f f f f f f f f 4 4 f . . . . 
+            f 4 4 4 4 4 4 4 4 4 4 f 2 5 2 . 
+            f 4 4 4 4 4 4 4 4 4 4 f 5 2 5 2 
+            . f f f f f f f f 4 4 f . . . . 
+            . . . . . . . . . f 4 f . . . . 
+            . . . . . . . . . . f f . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            `,img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . f f . . . . 
+            . . . . . . . . . f 4 f . . . . 
+            . f f f f f f f f 4 4 f . . . . 
+            f 4 4 4 4 4 4 4 4 4 4 f 5 2 5 2 
+            f 4 4 4 4 4 4 4 4 4 4 f 2 5 2 . 
+            . f f f f f f f f 4 4 f . . . . 
+            . . . . . . . . . f 4 f . . . . 
+            . . . . . . . . . . f f . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            `],
+        100,
+        true
+        )
+        missile.setVelocity(-50, 0)
+        missile.setPosition(256, randint(0, 250))
+        missile.setFlag(SpriteFlag.DestroyOnWall, true)
+    } else if (missileDirection == 2) {
+        missile = sprites.create(img`
+            . . . . . . . . 2 . . . . . . . 
+            . . . . . . . 2 5 . . . . . . . 
+            . . . . . . . 5 2 . . . . . . . 
+            . . . . . . . 2 5 . . . . . . . 
+            . . . . f f f f f f f f . . . . 
+            . . . . f 4 4 4 4 4 4 f . . . . 
+            . . . . . f 4 4 4 4 f . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . . f f . . . . . . . 
+            `, SpriteKind.Projectile)
+        animation.runImageAnimation(
+        missile,
+        [img`
+            . . . . . . . . 2 . . . . . . . 
+            . . . . . . . 2 5 . . . . . . . 
+            . . . . . . . 5 2 . . . . . . . 
+            . . . . . . . 2 5 . . . . . . . 
+            . . . . f f f f f f f f . . . . 
+            . . . . f 4 4 4 4 4 4 f . . . . 
+            . . . . . f 4 4 4 4 f . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . . f f . . . . . . . 
+            `,img`
+            . . . . . . . 2 . . . . . . . . 
+            . . . . . . . 5 2 . . . . . . . 
+            . . . . . . . 2 5 . . . . . . . 
+            . . . . . . . 5 2 . . . . . . . 
+            . . . . f f f f f f f f . . . . 
+            . . . . f 4 4 4 4 4 4 f . . . . 
+            . . . . . f 4 4 4 4 f . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . . f f . . . . . . . 
+            `],
+        100,
+        true
+        )
+        missile.setVelocity(0, 50)
+        missile.setPosition(randint(0, 250), 0)
+        missile.setFlag(SpriteFlag.DestroyOnWall, true)
+    } else {
+        missile = sprites.create(img`
+            . . . . . . . f f . . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . f 4 4 4 4 f . . . . . 
+            . . . . f 4 4 4 4 4 4 f . . . . 
+            . . . . f f f f f f f f . . . . 
+            . . . . . . . 5 2 . . . . . . . 
+            . . . . . . . 2 5 . . . . . . . 
+            . . . . . . . 5 2 . . . . . . . 
+            . . . . . . . 2 . . . . . . . . 
+            `, SpriteKind.Projectile)
+        animation.runImageAnimation(
+        missile,
+        [img`
+            . . . . . . . f f . . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . f 4 4 4 4 f . . . . . 
+            . . . . f 4 4 4 4 4 4 f . . . . 
+            . . . . f f f f f f f f . . . . 
+            . . . . . . . 5 2 . . . . . . . 
+            . . . . . . . 2 5 . . . . . . . 
+            . . . . . . . 5 2 . . . . . . . 
+            . . . . . . . 2 . . . . . . . . 
+            `,img`
+            . . . . . . . f f . . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . . f 4 4 f . . . . . . 
+            . . . . . f 4 4 4 4 f . . . . . 
+            . . . . f 4 4 4 4 4 4 f . . . . 
+            . . . . f f f f f f f f . . . . 
+            . . . . . . . 2 5 . . . . . . . 
+            . . . . . . . 5 2 . . . . . . . 
+            . . . . . . . 2 5 . . . . . . . 
+            . . . . . . . . 2 . . . . . . . 
+            `],
+        100,
+        true
+        )
+        missile.setVelocity(0, -50)
+        missile.setPosition(randint(0, 250), 256)
+        missile.setFlag(SpriteFlag.DestroyOnWall, true)
+    }
 })
 // Enemy Tanks shoot
 game.onUpdateInterval(500, function () {
