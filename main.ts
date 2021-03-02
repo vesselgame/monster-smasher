@@ -167,19 +167,20 @@ function createDayCityLists () {
     "Wreck"
     ]
     CityPrefix = [
-    " Happy",
-    " Fair",
-    " Pleasant",
-    " New",
-    " San",
-    " Fort",
-    " Saint",
-    " Grand",
-    " Little",
-    " North",
-    " South",
-    " East",
-    " West"
+    "Happy",
+    "Fair",
+    "Pleasant",
+    "New",
+    "San",
+    "Fort",
+    "Saint",
+    "Grand",
+    "Little",
+    "North",
+    "South",
+    "East",
+    "West",
+    "Rich"
     ]
     CitySuffix = [
     "burgh",
@@ -194,7 +195,8 @@ function createDayCityLists () {
     "view",
     "hampton",
     "center",
-    "town"
+    "town",
+    "hills"
     ]
 }
 function updateMovement () {
@@ -311,7 +313,7 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
 })
 function loadNextLevel () {
     stageNumber += 1
-    game.splash("Day " + ("" + stageNumber + " "), "" + ready_text_list._pickRandom() + CityPrefix._pickRandom() + CitySuffix._pickRandom())
+    game.splash("Day " + stageNumber, "" + ready_text_list._pickRandom() + " " + CityPrefix._pickRandom() + CitySuffix._pickRandom())
     scene.cameraFollowSprite(playerMonster)
     for (let value of sprites.allOfKind(SpriteKind.floor)) {
         value.destroy()
@@ -320,6 +322,9 @@ function loadNextLevel () {
     for (let value2 of sprites.allOfKind(SpriteKind.tanks)) {
         value2.destroy()
         effects.clearParticles(value2)
+    }
+    for (let value of sprites.allOfKind(SpriteKind.Projectile)) {
+        value.destroy()
     }
     buildCity()
     spawnEnemies()
@@ -648,6 +653,10 @@ controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
         )
     }
 })
+info.onLifeZero(function () {
+    info.setScore(stageNumber)
+    game.over(false)
+})
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Buildings, function (sprite, otherSprite) {
     scene.cameraShake(4, 500)
     otherSprite.destroy(effects.fire, 100)
@@ -658,6 +667,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Buildings, function (sprite, oth
     }
 })
 let projectile: Sprite = null
+let missileLeft: Sprite = null
 let water: Sprite = null
 let buildingsLeft = 0
 let Building: Sprite = null
@@ -934,10 +944,82 @@ game.onUpdateInterval(1000, function () {
         }
     }
 })
+forever(function () {
+    console.log(playerMonster.y)
+    pause(500)
+})
 // Stompy Sounds
 forever(function () {
     info.setScore(buildingsLeft)
     stompySounds()
+    for (let value of sprites.allOfKind(SpriteKind.Projectile)) {
+        if (value.x >= 240) {
+            value.destroy()
+        }
+    }
+})
+forever(function () {
+    pause(1000)
+    missileLeft = sprites.create(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . f f . . . . . . . . . . 
+        . . . . f 4 f . . . . . . . . . 
+        . . . . f 4 4 f f f f f f f f . 
+        2 5 2 5 f 4 4 4 4 4 4 4 4 4 4 f 
+        . 2 5 2 f 4 4 4 4 4 4 4 4 4 4 f 
+        . . . . f 4 4 f f f f f f f f . 
+        . . . . f 4 f . . . . . . . . . 
+        . . . . f f . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, SpriteKind.Projectile)
+    animation.runImageAnimation(
+    missileLeft,
+    [img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . f f . . . . . . . . . . 
+        . . . . f 4 f . . . . . . . . . 
+        . . . . f 4 4 f f f f f f f f . 
+        2 5 2 5 f 4 4 4 4 4 4 4 4 4 4 f 
+        . 2 5 2 f 4 4 4 4 4 4 4 4 4 4 f 
+        . . . . f 4 4 f f f f f f f f . 
+        . . . . f 4 f . . . . . . . . . 
+        . . . . f f . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `,img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . f f . . . . . . . . . . 
+        . . . . f 4 f . . . . . . . . . 
+        . . . . f 4 4 f f f f f f f f . 
+        . 2 5 2 f 4 4 4 4 4 4 4 4 4 4 f 
+        2 5 2 5 f 4 4 4 4 4 4 4 4 4 4 f 
+        . . . . f 4 4 f f f f f f f f . 
+        . . . . f 4 f . . . . . . . . . 
+        . . . . f f . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `],
+    100,
+    true
+    )
+    missileLeft.setVelocity(50, 0)
+    missileLeft.setPosition(0, randint(0, 250))
 })
 // Enemy Tanks shoot
 game.onUpdateInterval(500, function () {
